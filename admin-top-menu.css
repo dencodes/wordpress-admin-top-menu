@@ -1,0 +1,11 @@
+#wp-admin-bar-dencodes_admin_top_menu-default span.pending-count, 
+#wp-admin-bar-dencodes_admin_top_menu-default span.plugin-count
+{
+    padding: 1px 7px 1px 6px!important;
+    border-radius: 50%;
+    margin-left: 5px;
+    color: #000;
+    font-weight: normal;
+    background-color: lightgray;
+}
+
