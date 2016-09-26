@@ -1,11 +1,11 @@
 <?php
 /*
-Plugin Name: Admin Top-Menu by Dencodes
-Description: Move any selected items from the admin sidebar menu to the top (admin bar).
+Plugin Name: Admin Top-Menu
+Description: Move any items from the admin sidebar-menu to the new dropdown Top-Menu, located in the Admin Bar.
 Author: Denis Tkach (Dencodes)
 Text Domain: dencodes_atp
 Domain Path: /languages/
-Version: 0.9
+Version: 1.0
 */
 
 include_once( dirname( __FILE__ ) . '/admin-top-menu-settings.php' );
@@ -45,7 +45,7 @@ class DencodesAdminTopMenu
     }
     
     function add_plugins_settings_link($links) {
-      $settings_link = '<a href="tools.php?page=dcs_admin_top_menu">'.__('Admin Top-Menu Settings', 'dencodes_atp').'</a>';
+      $settings_link = '<a href="options-general.php?page=dcs_admin_top_menu">'.__('Settings').'</a>';
       array_unshift($links, $settings_link);
       return $links;
     }
@@ -62,12 +62,6 @@ class DencodesAdminTopMenu
     display: none;
 }'
         . '</style>';
-    }
-    
-    
-    public function action_after_save()
-    {
-        header("Location: " . $_SERVER['REQUEST_URI']); exit;
     }
     
     
@@ -100,7 +94,15 @@ class DencodesAdminTopMenu
         global $wp_admin_bar;
         
         $bar_id = 'dencodes_admin_top_menu';
-        $wp_admin_bar->add_node(array('id' => $bar_id, 'title' => __('Top Menu')));
+        $data = get_option( 'DencodesAdminTopMenuSettings', array() );
+        
+        if (isset($data['admin_top_label']) && $data['admin_top_label']) {
+            $label = $data['admin_top_label'];
+        }
+        else {
+            $label = __('Top Menu', 'dencodes_atp');
+        }
+        $wp_admin_bar->add_node(array('id' => $bar_id, 'title' => $label));
         
         /*
         $wp_admin_bar->add_node(array(
@@ -113,8 +115,21 @@ class DencodesAdminTopMenu
          */
         
         $arr_items = $this->bar_get_top_menu_items();
+        
+        if (!$arr_items) {
+            $arr_items[] = array(
+                0=>__('Add menu-items here...'),
+                1=>'dencodes-admin-top-menu-settings',
+                2=>'options-general.php?page=dcs_admin_top_menu',
+                3=>'',
+                4=>'',
+                5=>'',
+            );
+        }
 
         foreach ($arr_items AS $data) {
+            
+            //echo '<pre>'; print_r($data); echo '</pre>'; exit;
             
             $item_meta = array();
             $item_group = false;
@@ -170,8 +185,6 @@ class DencodesAdminTopMenu
         $result = array();
         $arr_selected = $this->menu_get_selected_items();
         
-        //echo '<pre>'; print_r($arr_selected); echo '</pre>'; exit;
-        
         foreach ($this->menu AS $key=>$data) {
             $setkey = md5($data[2]);
             if (isset($arr_selected[$setkey]) && $arr_selected[$setkey]) {
@@ -196,17 +209,6 @@ class DencodesAdminTopMenu
         if (isset($data['admin_top_items'])) {
             $result = $data['admin_top_items'];
         }
-        //echo '<pre>'; print_r($data); echo '</pre>'; exit;
-        /*
-        $result = array(
-            'tools.php',
-            'edit-comments.php',
-            'edit.php?post_type=sb_modals',
-            'plugins.php',
-            'users.php',
-        );
-         * 
-         */
         
         return $result;
     }

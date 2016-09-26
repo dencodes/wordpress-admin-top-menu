@@ -6,17 +6,21 @@ class DencodesAdminTopMenuSettings extends AdminPageFramework {
     
     public function setUp() {
 
-        //$this->setRootMenuPageBySlug( 'dcs_admin_top_menu' );    // create a root page
-        $this->setRootMenuPage( 'Tools' ); 
+        $this->setRootMenuPage( 'Settings' ); 
         
         $this->addSubMenuItem(
             array(
-                'title'        => __( 'Admin Top-Menu Settings', 'dencodes_atp' ),
+                'title'        => __( 'Admin Top-Menu', 'dencodes_atp' ),
                 'page_slug'    => 'dcs_admin_top_menu'
             )
         );
 
 
+    }
+    
+    
+    public function content( $sHTML ) {
+        return '<p>'.__('"Settings / Admin Top-Menu" - is the location of this page.', 'dencodes_atp').'</p>' . $sHTML;
     }
     
     public function load_dcs_admin_top_menu( $oAdminPage ) {
@@ -36,14 +40,21 @@ class DencodesAdminTopMenuSettings extends AdminPageFramework {
         
         foreach ($topmenu->menu AS $key=>$data) {
             if ($data[0]) {
-                $label[md5($data[2])] = $data[0];
+                //echo '<pre>'; print_r($data); echo '</pre>';
+                $label[md5($data[2])] = '<a href="'.$data[2].'" target="_blank">'.$data[0].'</a>';
             }
         }
         
         $this->addSettingFields(
+            array(    
+                'field_id'      => 'admin_top_label',
+                'title'         => __('Top-Menu Name', 'dencodes_atp'),
+                'type'          => 'text',
+                'default'       => __('Top Menu', 'dencodes_atp'),
+            ),
             array(
                 'field_id'      => 'admin_top_items',
-                'title'         => __('Move items to the Top-Menu', 'dencodes_atp'),
+                'title'         => __('Move to the Top-Menu', 'dencodes_atp'),
                 'type'          => 'checkbox',
                 'label'         => $label,
                 'default'       => $default,
@@ -53,7 +64,7 @@ class DencodesAdminTopMenuSettings extends AdminPageFramework {
             array(    
                 'field_id'      => 'submit',
                 'type'          => 'submit',
-                'label'         => __( 'Save', 'dencodes_atp' )
+                'redirect_url'  => $_SERVER['REQUEST_URI'],
             )
         );
 
