@@ -116,9 +116,9 @@ class DencodesAdminTopMenu
         
         $arr_items = $this->bar_get_top_menu_items();
         
-        if (!$arr_items) {
+        if (1 || !$arr_items) {
             $arr_items[] = array(
-                0=>__('Add menu-items here...'),
+                0=>__('Add/remove menu-items...'),
                 1=>'dencodes-admin-top-menu-settings',
                 2=>'options-general.php?page=dcs_admin_top_menu',
                 3=>'',
